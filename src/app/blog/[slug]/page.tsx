@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { serialize } from "next-mdx-remote/serialize";
+import MDXContent from "@/components/mdxContent";
 
 export async function generateStaticParams() {
   const posts = fs.readdirSync(path.join(process.cwd(), "src", "posts"));
@@ -20,12 +22,13 @@ export default async function BlogPost({
   );
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContent);
+  const mdxSource = await serialize(content);
 
   return (
     <article className="max-w-4xl mx-auto p-8">
       <h1 className="text-3xl font-bold">{data.title}</h1>
       <p className="text-gray-500 mb-4">{data.date}</p>
-      <div className="prose">{content}</div>
+      <MDXContent source={mdxSource} />
     </article>
   );
 }

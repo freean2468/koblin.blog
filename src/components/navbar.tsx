@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav className="bg-gray-800 text-white px-4 py-3">
       <div className="max-w-7xl mx-auto flex justify-between">
         <h1 className="font-bold text-xl">
-          <Link href="/">My Blog</Link>
+          <Link href="/">Koblin Blog</Link>
         </h1>
         <div className="flex space-x-4">
           <Link href="/blog">Blog</Link>
