@@ -1,0 +1,185 @@
+---
+title: "How I develop"
+date: "2024-Nov-18"
+description: "How I approach development"
+tags: ["development approach"]
+---
+As of November 2024, I have reached my 6th year as an web developer in my professional career.
+
+In this post, I’ll share how I approach development in a company environment, collaborating with others to build effective solutions.
+
+The process I follow typically includes the following steps:
+
+1. Understanding business requirements
+2. Writing down development design documents
+3. Adjusting speculations with the other parts
+4. Writing test code using TDD principles
+5. Preparing documentation for fornt-end developers
+6. QA
+7. Release
+
+Let's begin.
+
+---
+
+## 1. Understanding Business Requirements
+
+The first step in any development process is to understand the business requirements.  
+Most of the time, these requirements are provided by the project manager (PM), who has already aligned with the stakeholders to define them.  
+Occasionally, they may come in a raw form, such as through verbal communication with board members or other key decision-makers.
+
+To address these requirements, we hold a project kickoff meeting.  
+During the meeting, I carefully analyze the business requirements, considering the best solutions from a technical perspective.  
+I also share my opinions on:
+- **Approaches**: How we should tackle the requirements.  
+- **Considerations**: Potential factors to address before starting the project.  
+- **Interdependencies**: Whether a chosen approach might create issues for other parts of the system.
+
+Another key aspect of the meeting is **time estimation**.  
+We evaluate how long the project will take and share this estimate with the PM, enabling them to plan the project timeline effectively.
+
+---
+
+## 2. Writing Development Design Documents
+
+Before writing a single line of code, I draft development design documents.  
+These documents detail the:
+- **Tech stack**: Tools and technologies required for the project.  
+- **Implementation plan**: How the tools will be utilized to achieve the desired outcomes.  
+- **Edge cases**: Anticipated exceptional scenarios and how to handle them.  
+
+This step helps me outline the entire development process, anticipate challenges, and prepare solutions.  
+By sharing these documents with the team, we encourage feedback that can enhance the project’s quality even before development begins.
+
+<figure className="flex flex-col items-center my-4">
+  <img
+    src="/posts/how_i_dev/dev_doc_index.png"
+    alt="example development design document index"
+    width={298}
+    height={567}
+  />
+  <figcaption className="text-gray-600 text-sm">
+    <p style={{"margin-top":"0px", "margin-bottom":"0px"}}>Example: Development Design Document Index</p>
+  </figcaption>
+</figure>
+
+
+The documents often include **data modeling** and **API specifications**, which are critical for understanding and aligning technical workflows.
+
+<figure className="flex flex-col items-center my-4">
+  <img
+    src="/posts/how_i_dev/mod_api.png"
+    alt="example development design document modeling and API"
+    width={275}
+    height={85}
+  />
+  <figcaption className="text-gray-600 text-sm">
+    <p style={{"margin-top":"0px", "margin-bottom":"0px"}}>Example: Modeling and API Specification</p>
+  </figcaption>
+</figure>
+
+
+By creating and refining these documents, the team ensures that everyone is aligned, which significantly improves the project’s foundation and efficiency**.**
+
+---
+
+## 3. Adjusting Speculations With The Other Parts
+
+As a back-end developer (though I consider myself full-stack capable), I collaborate closely with front-end developers to ensure the technical aspects align with design and user experience requirements.  
+During the early stages of workflow, I verify that the **API specifications** and **data modeling** align with front-end requirements.  
+
+I often view front-end developers as the "customers" of my APIs.  
+Therefore, I prioritize ensuring that:
+- The API is **well-verified** before use.  
+- The API is **intuitive** to implement.
+
+In this process, I share my thoughts on API design and adjust the specifications based on feedback from the front-end team.
+
+---
+
+## 4. Writing Test Code Using TDD Principles
+
+To ensure the API works as expected, I write test code following the **Test-Driven Development (TDD)** methodology.
+This process ensures the API functions correctly and that future changes do not break the existing codebase.
+
+One well-known TDD strategy is **Red-Green-Refactor**:
+1. **Red**: Write a failing test.  
+2. **Green**: Write the minimum code required to pass the test.  
+3. **Refactor**: Clean up and optimize the code while maintaining functionality.
+
+<img
+  src="/posts/how_i_dev/tdd.png"
+  alt="Red-Green-Refactor"
+  width={600}
+  height={465}
+/>
+
+Though writing test code before actual implementation feels counterintuitive, it is highly effective for maintaining a robust and maintainable codebase.  
+While I don’t strictly adhere to TDD, I always keep its purpose in mind to write effective test cases.
+
+
+---
+
+## 5. Preparing Documentation for Fornt-end Developers
+
+Once the API is verified with test code, I prepare comprehensive documentation for front-end developers to enable efficient integration.  
+
+This documentation typically includes:
+- **API Details**: Endpoints, request/response formats, and error handling guidelines.  
+<img
+  src="/posts/how_i_dev/api_detail.png"
+  alt="api detail"
+  width={250}
+  height={125}/>
+- **Swagger Documentation**: For automated and interactive API documentation.  
+<img
+  src="/posts/how_i_dev/swagger.png"
+  alt="swagger document"
+  width={250}
+  height={125}/>
+- **Project-Specific Notes**: Additional details tailored to the project.  
+
+Good documentation ensures that front-end developers can seamlessly integrate the API without confusion or delays.
+
+
+---
+
+## 6. QA
+
+Quality assurance (QA) is a critical step in the development process.  
+In this phase, the entire team collaborates to test whether the project meets business requirements and functions as expected.
+
+If issues arise, the team reports them, and an assigner addresses them promptly.  
+<img
+  src="/posts/how_i_dev/qa.png"
+  alt="issue cards"
+  width={647}
+  height={219}/>
+The QA phase ensures that the project is stable and ready for release to the production environment.
+
+
+---
+
+
+## 7. Release
+
+The final step is releasing the project to the production environment, where real customers can use the service.  
+
+The release process varies depending on the project and company policies. However, it is crucial to ensure that:
+- The project works as expected in the production environment.  
+- Additional post-release tests are conducted to verify functionality.  
+
+---
+
+## Conclusion
+
+In this post, I shared how I approach development in a company environment, focusing on processes and collaboration.  
+
+While there are many methodologies and strategies for project development, I believe the most important aspects are ensuring the project works as expected and maintaining its long-term maintainability.
+
+In the next post, I’ll dive deeper into each step shared here. Stay tuned!
+
+
+
+
+
