@@ -1,13 +1,14 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { PostData } from "@/types/post";
 
 const postsDirectory = path.join(process.cwd(), "src", "posts");
 
 export function getSortedPosts() {
   const fileNames = fs.readdirSync(postsDirectory);
 
-  const posts: any = fileNames.map((fileName) => {
+  const posts: PostData[] = fileNames.map((fileName) => {
     const filePath = path.join(postsDirectory, fileName);
     const fileContents = fs.readFileSync(filePath, "utf8");
     const { data } = matter(fileContents);
@@ -15,11 +16,11 @@ export function getSortedPosts() {
     return {
       ...data,
       slug: fileName.replace(/\.mdx$/, ""),
-    };
+    } as PostData;
   });
 
   return posts.sort(
-    (a: any, b: any) =>
+    (a: PostData, b: PostData) =>
       new Date(b.date).getUTCMilliseconds() -
       new Date(a.date).getUTCMilliseconds()
   );
