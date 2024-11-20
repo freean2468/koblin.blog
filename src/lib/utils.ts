@@ -1,26 +1,40 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import { PostData } from "@/types/post";
+import { PostPreviewData } from "@/types/post";
+import * as cheerio from "cheerio";
 
 const postsDirectory = path.join(process.cwd(), "src", "posts");
 
 export function getSortedPosts() {
   const fileNames = fs.readdirSync(postsDirectory);
 
-  const posts: PostData[] = fileNames.map((fileName) => {
+  const posts: PostPreviewData[] = fileNames.map((fileName) => {
     const filePath = path.join(postsDirectory, fileName);
     const fileContents = fs.readFileSync(filePath, "utf8");
-    const { data } = matter(fileContents);
+
+    // Extract metadata and content using gray-matter
+    const { data, content } = matter(fileContents);
+    const $ = cheerio.load(content);
+    const firstImage: string | null = $("img").first().attr("src") || null;
+
+    // Strip out HTML/MDX and get the first 50 characters
+    const plainText = content
+      .replace(/<\/?[^>]+(>|$)/g, "")
+      .replace(/\{.*?\}/g, "");
+    const previewText = plainText.slice(0, 100);
 
     return {
-      ...data,
-      slug: fileName.replace(/\.mdx$/, ""),
-    } as PostData;
+      slug: fileName.replace(/\.mdx$/, ""), // Generate a slug from the file name
+      ...data, // Spread metadata (e.g., title, date, tags)
+      content, // Include the content
+      firstImage, // Include the first image
+      previewText, // Include the preview text
+    } as PostPreviewData;
   });
 
   return posts.sort(
-    (a: PostData, b: PostData) =>
+    (a: PostPreviewData, b: PostPreviewData) =>
       new Date(b.date).getUTCMilliseconds() -
       new Date(a.date).getUTCMilliseconds()
   );

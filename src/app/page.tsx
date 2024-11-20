@@ -1,57 +1,91 @@
+"use client";
+
+import Product from "@/components/products";
+import { PostPreviewData } from "@/types/post";
 import Image from "next/image";
 import Link from "next/link";
+import React, { useEffect } from "react";
 
 export default function Home() {
+  const [posts, setPosts] = React.useState([]);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const posts = await fetch("/api/v1/posts");
+      setPosts(await posts.json());
+    };
+
+    fetchPosts();
+  }, []);
+  const [doesDisplayPosts, setDoesDisplayPosts] = React.useState(true);
+
   return (
-    <section className="max-w-7xl mx-auto p-8">
-      <h1 className="text-4xl font-bold mb-4">Welcome to Koblin Blog</h1>
-      <Image
-        src="/koblin.png"
-        alt="Koblin character"
-        width={256}
-        height={256}
-      />
-      <p className="text-lg mb-8">
-        I write about web development, technology, and career growth. My work is
-        also published on Medium. Check out my latest posts and projects!
-      </p>
-      <div className="flex flex-col">
-        <div className="flex flex-col hover:opacity-90 transition-opacity">
-          <Link
-            href="https://gametome.site"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className="text-2xl font-bold">GameTome</h2>
-            <div className="flex flex-col p-4 rounded">
-              <h3 className="text-xl font-bold">
-                English Dictionary for Gamers
-              </h3>
-              <p className="text-lg">
-                GameTome holds a collection of game scenes in a dictionary
-                format.
-              </p>
-            </div>
-            <Image
-              src="/home/gametome.png"
-              alt="gametome web app"
-              width={535}
-              height={432}
-            />
-          </Link>
-        </div>
-        <div className="flex space-x-4">
-          <Link href="/blog/post">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded">
+    <section className="mx-auto p-8 flex flex-col">
+      <div className="flex flex-col flex-auto border-b-2 border-b-gray-300">
+        <h1 className="text-4xl font-bold mb-4 ">Welcome to Koblin Blog</h1>
+        <p className="text-lg mb-2">
+          I write about web development, technology, and career growth. My work
+          is also published on Medium. Check out my latest posts and projects!
+        </p>
+        <div className="flex flex-col sm:hidden">
+          <div className="flex space-x-4">
+            <button
+              className={`${
+                doesDisplayPosts ? "bg-gray-800" : "bg-gray-600"
+              } text-white px-4 py-2 rounded hover:opacity-90 transition-opacity`}
+              onClick={() => setDoesDisplayPosts(true)}
+            >
               Read Blog
             </button>
-          </Link>
-          <Link href="/portfolio">
-            <button className="bg-gray-600 text-white px-4 py-2 rounded">
-              View Portfolio
+            <button
+              className={`${
+                doesDisplayPosts ? "bg-gray-600" : "bg-gray-800"
+              } text-white px-4 py-2 rounded hover:opacity-50 transition-opacity`}
+              onClick={() => setDoesDisplayPosts(false)}
+            >
+              View Projects
             </button>
-          </Link>
+          </div>
         </div>
+      </div>
+      <div className="flex flex-row mt-2">
+        <span
+          className={`flex-col flex-auto ${
+            doesDisplayPosts
+              ? "flex basis-2/3 pr-2"
+              : "hidden sm:flex sm:basis-2/3 sm:pr-2"
+          }`}
+        >
+          {posts.map((post: PostPreviewData) => (
+            <div
+              key={post.slug}
+              className="mb-8 hover:opacity-90 transition-opacity"
+            >
+              <Link href={`/blog/${post.slug}`}>
+                <h2 className="text-2xl font-bold">{post.title}</h2>
+                <p className="text-gray-400 mb-4">{post.date}</p>
+                <p className="text-gray-300">{post.previewText}...</p>
+                {post.firstImage && (
+                  <Image
+                    src={post.firstImage}
+                    alt={post.title}
+                    className="my-4"
+                    width={80}
+                    height={50}
+                  />
+                )}
+              </Link>
+            </div>
+          ))}
+        </span>
+        <span
+          className={`flex-auto ${
+            doesDisplayPosts
+              ? "hidden sm:flex sm:basis-1/3 sm:border-l-2 sm:border-l-gray-300 sm:pl-2"
+              : "flex basis-1/3 border-l-2 border-l-gray-300"
+          }`}
+        >
+          <Product />
+        </span>
       </div>
     </section>
   );
