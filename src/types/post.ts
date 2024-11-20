@@ -5,3 +5,9 @@ export interface PostData {
   description?: string;
   slug: string;
 }
+
+export interface PostPreviewData extends PostData {
+  previewText: string;
+  content: string;
+  firstImage: string | null;
+}

@@ -3,19 +3,26 @@ import path from "path";
 import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import MDXContent from "@/components/mdxContent";
+import { notFound } from "next/navigation";
 
 export default async function BlogPost({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const resolvedParams = await params; // Await the params object
   const filePath = path.join(
     process.cwd(),
     "src",
     "posts",
-    `${resolvedParams.slug}.mdx`
+    `${params.slug}.mdx`
   );
+
+  try {
+    fs.accessSync(filePath);
+  } catch {
+    notFound();
+  }
+
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContent);
   const mdxSource = await serialize(content);
@@ -27,14 +34,4 @@ export default async function BlogPost({
       <MDXContent source={mdxSource} />
     </article>
   );
-}
-
-// Dynamic parameters for the App Router
-export async function generateStaticParams() {
-  const postsDirectory = path.join(process.cwd(), "src", "posts");
-  const fileNames = fs.readdirSync(postsDirectory);
-
-  return fileNames.map((fileName) => ({
-    slug: fileName.replace(/\.mdx$/, ""),
-  }));
 }
