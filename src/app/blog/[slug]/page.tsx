@@ -8,13 +8,14 @@ import { notFound } from "next/navigation";
 export default async function BlogPost({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const resolvedParams = await params;
   const filePath = path.join(
     process.cwd(),
     "src",
     "posts",
-    `${params.slug}.mdx`
+    `${resolvedParams.slug}.mdx`
   );
 
   try {
