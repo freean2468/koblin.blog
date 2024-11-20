@@ -1,28 +1,29 @@
 ---
-title: "How I develop"
+title: "How I develop : A 6-Year Web Developer’s Perspective"
 date: "2024-Nov-18"
 description: "How I approach development"
 tags: ["development approach"]
 ---
 As of November 2024, I have reached my 6th year as an web developer in my professional career.
 
-In this post, I’ll share how I approach development in a company environment, collaborating with others to build effective solutions.
+Over this time, moving from a start-up to other start-up, I’ve developed a structured approach to tackling projects in a team environment. 
+From understanding business requirements to final production releases, this post shares my development process step-by-step, emphasizing collaboration, efficiency, and maintainability.
 
 The process I follow typically includes the following steps:
 
-1. Understanding business requirements
-2. Writing down development design documents
-3. Adjusting speculations with the other parts
-4. Writing test code using TDD principles
-5. Preparing documentation for fornt-end developers
-6. QA
-7. Release
+1. [Understanding business requirements](#1)
+2. [Writing down development design documents](#2)
+3. [Refining Specifications with Other Players](#3)
+4. [Writing test code using TDD principles](#4)
+5. [Preparing documentation for front-end developers](#5)
+6. [QA](#6)
+7. [Release](#7)
 
 Let's begin.
 
 ---
 
-## 1. Understanding Business Requirements
+<h2 id="1">1. Understanding Business Requirements</h2>
 
 The first step in any development process is to understand the business requirements.  
 Most of the time, these requirements are provided by the project manager (PM), who has already aligned with the stakeholders to define them.  
@@ -40,7 +41,7 @@ We evaluate how long the project will take and share this estimate with the PM, 
 
 ---
 
-## 2. Writing Development Design Documents
+<h2 id="2">2. Writing Development Design Documents</h2>
 
 Before writing a single line of code, I draft development design documents.  
 These documents detail the:
@@ -83,7 +84,7 @@ By creating and refining these documents, the team ensures that everyone is alig
 
 ---
 
-## 3. Adjusting Speculations With The Other Parts
+<h2 id="3">3.Refining Specifications with Other Players.</h2>
 
 As a back-end developer (though I consider myself full-stack capable), I collaborate closely with front-end developers to ensure the technical aspects align with design and user experience requirements.  
 During the early stages of workflow, I verify that the **API specifications** and **data modeling** align with front-end requirements.  
@@ -97,7 +98,7 @@ In this process, I share my thoughts on API design and adjust the specifications
 
 ---
 
-## 4. Writing Test Code Using TDD Principles
+<h2 id="4">4. Writing Test Code Using TDD Principles</h2>
 
 To ensure the API works as expected, I write test code following the **Test-Driven Development (TDD)** methodology.
 This process ensures the API functions correctly and that future changes do not break the existing codebase.
@@ -115,36 +116,36 @@ One well-known TDD strategy is **Red-Green-Refactor**:
 />
 
 Though writing test code before actual implementation feels counterintuitive, it is highly effective for maintaining a robust and maintainable codebase.  
-While I don’t strictly adhere to TDD, I always keep its purpose in mind to write effective test cases.
+While I don’t strictly adhere to TDD, I always keep its purpose in mind to write effective test code.
 
 
 ---
 
-## 5. Preparing Documentation for Fornt-end Developers
+<h2 id="5">5. Preparing Documentation for Front-end Developers</h2>
 
 Once the API is verified with test code, I prepare comprehensive documentation for front-end developers to enable efficient integration.  
 
 This documentation typically includes:
-- **API Details**: Endpoints, request/response formats, and error handling guidelines.  
+- **API Details**: Endpoints, request/response formats, and error handling guidelines.
+- **Project-Specific Notes**: Additional details tailored to the project.    
 <img
   src="/posts/how_i_dev/api_detail.png"
   alt="api detail"
   width={250}
   height={125}/>
-- **Swagger Documentation**: For automated and interactive API documentation.  
+- **Swagger Documentation**: Auto-generated with detail data structures from the very working codebase.
 <img
   src="/posts/how_i_dev/swagger.png"
   alt="swagger document"
   width={250}
   height={125}/>
-- **Project-Specific Notes**: Additional details tailored to the project.  
 
 Good documentation ensures that front-end developers can seamlessly integrate the API without confusion or delays.
 
 
 ---
 
-## 6. QA
+<h2 id="6">6. QA</h2>
 
 Quality assurance (QA) is a critical step in the development process.  
 In this phase, the entire team collaborates to test whether the project meets business requirements and functions as expected.
@@ -161,7 +162,7 @@ The QA phase ensures that the project is stable and ready for release to the pro
 ---
 
 
-## 7. Release
+<h2 id="7">7. Release</h2>
 
 The final step is releasing the project to the production environment, where real customers can use the service.  
 
@@ -174,12 +175,10 @@ The release process varies depending on the project and company policies. Howeve
 ## Conclusion
 
 In this post, I shared how I approach development in a company environment, focusing on processes and collaboration.  
-
 While there are many methodologies and strategies for project development, I believe the most important aspects are ensuring the project works as expected and maintaining its long-term maintainability.
 
-In the next post, I’ll dive deeper into each step shared here. Stay tuned!
+{/* Thank you for taking the time to read about my approach to development. I hope this post provides some valuable insights into structured, collaborative workflows.
+If you found this helpful or have any questions, feel free to share your thoughts in the comments below or connect with me on LinkedIn. */}
+Stay tuned for my next post, where I’ll dive deeper into one of these steps in greater detail.
 
-
-
-
-
+{/* This post was originally posted on my [blog](https://koblin.blog) */}
