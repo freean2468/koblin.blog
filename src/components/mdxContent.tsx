@@ -7,10 +7,10 @@ interface MDXContentProps {
   source: MDXRemoteSerializeResult;
 }
 
-import { ComponentType, ImgHTMLAttributes } from "react";
+import { ImgHTMLAttributes } from "react";
 
 const components = {
-  img: ((props: ImgHTMLAttributes<HTMLImageElement>) => (
+  img: (props: ImgHTMLAttributes<HTMLImageElement>) => (
     <Image
       {...props}
       src={props.src || ""}
@@ -19,7 +19,7 @@ const components = {
       height={Number(props.height) || 400}
       layout="responsive"
     />
-  )) as ComponentType<ImgHTMLAttributes<HTMLImageElement>>,
+  ),
 };
 
 export default function MDXContent({ source }: MDXContentProps) {
