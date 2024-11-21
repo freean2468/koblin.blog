@@ -28,9 +28,9 @@ export default function Product() {
             rel="noopener noreferrer"
             key={p.title}
           >
-            <h2 className="text-2xl font-bold">{p.title}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold">{p.title}</h2>
             <div className="flex flex-col p-4 rounded">
-              <h3 className="text-xl font-bold">{p.subtitle}</h3>
+              <h3 className="text-lg sm:text-xl font-bold">{p.subtitle}</h3>
               <p className="text-gray-300">{p.description}</p>
             </div>
             <Image
