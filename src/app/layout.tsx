@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     siteName: SITE_TITLE,
     images: [
       {
-        url: `${BASE_URL}/og-image.jpg`, // Replace with your Open Graph image URL
-        width: 1200,
-        height: 630,
+        url: `${BASE_URL}/koblin.png`, // Replace with your Open Graph image URL
+        width: 512,
+        height: 512,
         alt: "Koblin Blog Open Graph Image",
       },
     ],
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [`${BASE_URL}/og-image.jpg`], // Replace with your Twitter image URL
+    images: [`${BASE_URL}/koblin.png`], // Replace with your Twitter image URL
   },
 };
 
