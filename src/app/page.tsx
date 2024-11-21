@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <section className="mx-auto p-8 flex flex-col">
-      <div className="flex flex-col flex-auto border-b-2 border-b-gray-300 pb-2">
+      <div className="flex flex-col flex-auto border-b-2 border-b-gray-400 pb-2">
         <h1 className="text-xl sm:text-3xl font-bold mb-4 ">
           Welcome to Koblin Blog
         </h1>
@@ -63,20 +63,24 @@ export default function Home() {
               className="mb-8 hover:opacity-90 transition-opacity"
             >
               <Link href={`/blog/${post.slug}`}>
-                <h2 className="text-xl sm:text-2xl font-bold">{post.title}</h2>
                 <div className="flex flex-row">
                   <div className="flex-basis-3/4">
+                    <h2 className="text-xl sm:text-2xl font-bold">
+                      {post.title}
+                    </h2>
                     <p className="text-gray-400 mb-4">{post.date}</p>
                     <p className="text-gray-300">{post.previewText}...</p>
                   </div>
                   {post.firstImage && (
-                    <Image
-                      src={post.firstImage}
-                      alt={post.title}
-                      className="my-4 flex-basis-1/4"
-                      width={80}
-                      height={50}
-                    />
+                    <div className="relative w-[100px] h-[100px] overflow-hidden">
+                      <Image
+                        src={post.firstImage}
+                        alt={post.title}
+                        className="my-4 flex-basis-1/4"
+                        objectFit="cover"
+                        layout="fill"
+                      />
+                    </div>
                   )}
                 </div>
               </Link>
@@ -86,7 +90,7 @@ export default function Home() {
         <span
           className={`flex-auto ${
             doesDisplayPosts
-              ? "hidden sm:flex sm:basis-1/3 sm:border-l-2 sm:border-l-gray-300 sm:pl-2"
+              ? "hidden sm:flex sm:basis-1/3 sm:border-l-2 sm:border-l-gray-400 sm:pl-2"
               : "flex basis-1/3"
           }`}
         >
