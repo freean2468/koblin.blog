@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://koblin.blog
+
+# Sitemaps
+Sitemap: https://koblin.blog/sitemap.xml
