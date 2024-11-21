@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/navbar";
+import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { BASE_URL, SITE_DESCRIPTION, SITE_TITLE } from "@/constants";
 import Script from "next/script";
@@ -93,7 +93,7 @@ export default function RootLayout({
         ></Script>
       </head>
       <body className="flex flex-col min-h-screen">
-        <Navbar />
+        <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
       </body>
