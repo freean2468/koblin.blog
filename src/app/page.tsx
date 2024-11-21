@@ -19,7 +19,7 @@ export default function Home() {
   const [doesDisplayPosts, setDoesDisplayPosts] = React.useState(true);
 
   return (
-    <section className="mx-auto p-8 flex flex-col">
+    <section className="max-w-screen-xl mx-auto p-8 flex flex-col">
       <div className="flex flex-col flex-auto border-b-2 border-b-gray-400 pb-2">
         <h1 className="text-xl sm:text-3xl font-bold mb-4 ">
           Welcome to Koblin Blog
