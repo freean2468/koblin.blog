@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { BASE_URL, SITE_DESCRIPTION, SITE_TITLE } from "@/constants";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
@@ -69,6 +70,27 @@ export default function RootLayout({
           href="/android-chrome-512x512.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9634519241047792"
+          crossOrigin="anonymous"
+        ></Script>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-KPMQX1X54J"
+        ></Script>
+        <Script
+          id="google-anlytics"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-KPMQX1X54J');
+              `,
+          }}
+        ></Script>
       </head>
       <body className="flex flex-col min-h-screen">
         <Navbar />
