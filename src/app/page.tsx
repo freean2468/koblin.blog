@@ -20,9 +20,11 @@ export default function Home() {
 
   return (
     <section className="mx-auto p-8 flex flex-col">
-      <div className="flex flex-col flex-auto border-b-2 border-b-gray-300">
-        <h1 className="text-4xl font-bold mb-4 ">Welcome to Koblin Blog</h1>
-        <p className="text-lg mb-2">
+      <div className="flex flex-col flex-auto border-b-2 border-b-gray-300 pb-2">
+        <h1 className="text-xl sm:text-3xl font-bold mb-4 ">
+          Welcome to Koblin Blog
+        </h1>
+        <p className="sm:text-lg mb-2">
           I write about web development, technology, and career growth. My work
           is also published on Medium. Check out my latest posts and projects!
         </p>
@@ -34,7 +36,7 @@ export default function Home() {
               } text-white px-4 py-2 rounded hover:opacity-90 transition-opacity`}
               onClick={() => setDoesDisplayPosts(true)}
             >
-              Read Blog
+              Posts
             </button>
             <button
               className={`${
@@ -42,7 +44,7 @@ export default function Home() {
               } text-white px-4 py-2 rounded hover:opacity-50 transition-opacity`}
               onClick={() => setDoesDisplayPosts(false)}
             >
-              View Projects
+              Projects
             </button>
           </div>
         </div>
@@ -61,18 +63,22 @@ export default function Home() {
               className="mb-8 hover:opacity-90 transition-opacity"
             >
               <Link href={`/blog/${post.slug}`}>
-                <h2 className="text-2xl font-bold">{post.title}</h2>
-                <p className="text-gray-400 mb-4">{post.date}</p>
-                <p className="text-gray-300">{post.previewText}...</p>
-                {post.firstImage && (
-                  <Image
-                    src={post.firstImage}
-                    alt={post.title}
-                    className="my-4"
-                    width={80}
-                    height={50}
-                  />
-                )}
+                <h2 className="text-xl sm:text-2xl font-bold">{post.title}</h2>
+                <div className="flex flex-row">
+                  <div className="flex-basis-3/4">
+                    <p className="text-gray-400 mb-4">{post.date}</p>
+                    <p className="text-gray-300">{post.previewText}...</p>
+                  </div>
+                  {post.firstImage && (
+                    <Image
+                      src={post.firstImage}
+                      alt={post.title}
+                      className="my-4 flex-basis-1/4"
+                      width={80}
+                      height={50}
+                    />
+                  )}
+                </div>
               </Link>
             </div>
           ))}
@@ -81,7 +87,7 @@ export default function Home() {
           className={`flex-auto ${
             doesDisplayPosts
               ? "hidden sm:flex sm:basis-1/3 sm:border-l-2 sm:border-l-gray-300 sm:pl-2"
-              : "flex basis-1/3 border-l-2 border-l-gray-300"
+              : "flex basis-1/3"
           }`}
         >
           <Product />
