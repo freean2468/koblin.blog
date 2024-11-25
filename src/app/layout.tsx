@@ -4,13 +4,13 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { BASE_URL, SITE_DESCRIPTION, SITE_TITLE } from "@/constants";
 import Script from "next/script";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   openGraph: {
     title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
     url: BASE_URL,
     siteName: SITE_TITLE,
     images: [
@@ -30,6 +30,10 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [`${BASE_URL}/koblin.png`], // Replace with your Twitter image URL
   },
+  robots: "index, follow",
+  alternates: {
+    canonical: BASE_URL,
+  },
 };
 
 export default function RootLayout({
@@ -39,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <head>
+      <Head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.ico" type="image/x-icon"></link>
         <link
@@ -70,16 +74,12 @@ export default function RootLayout({
           href="/android-chrome-512x512.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-        <Script
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9634519241047792"
           crossOrigin="anonymous"
-        ></Script>
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-KPMQX1X54J"
-        ></Script>
-        <Script
+        ></script>
+        <script
           id="google-anlytics"
           dangerouslySetInnerHTML={{
             __html: `
@@ -90,12 +90,16 @@ export default function RootLayout({
               gtag('config', 'G-KPMQX1X54J');
               `,
           }}
-        ></Script>
-      </head>
+        ></script>
+      </Head>
       <body className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-KPMQX1X54J"
+        ></Script>
       </body>
     </html>
   );
