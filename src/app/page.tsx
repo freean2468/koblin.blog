@@ -1,7 +1,9 @@
 "use client";
 
 import Product from "@/components/products";
+import { BASE_URL } from "@/constants";
 import { PostPreviewData } from "@/types/post";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -20,6 +22,9 @@ export default function Home() {
 
   return (
     <section className="max-w-screen-xl mx-auto p-8 flex flex-col">
+      <Head>
+        <link rel="canonical" href={BASE_URL} />
+      </Head>
       <div className="flex flex-col flex-auto border-b-2 border-b-gray-400 pb-2">
         <h1 className="text-xl sm:text-3xl font-bold mb-4 ">
           Welcome to Koblin Blog
