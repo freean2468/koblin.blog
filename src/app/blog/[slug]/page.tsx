@@ -4,6 +4,8 @@ import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import MDXContent from "@/components/mdxContent";
 import { notFound } from "next/navigation";
+import Head from "next/head";
+import { BASE_URL } from "@/constants";
 
 export default async function BlogPost({
   params,
@@ -29,10 +31,19 @@ export default async function BlogPost({
   const mdxSource = await serialize(content);
 
   return (
-    <article className="max-w-4xl mx-auto p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold">{data.title}</h1>
-      <p className="text-gray-500 mb-4">{data.date}</p>
-      <MDXContent source={mdxSource} />
-    </article>
+    <>
+      <Head>
+        <meta name="description" content={data.description} />
+        <link
+          rel="canonical"
+          href={`${BASE_URL}/blog/${resolvedParams.slug}`}
+        />
+      </Head>
+      <article className="max-w-4xl mx-auto p-8">
+        <h1 className="text-2xl sm:text-3xl font-bold">{data.title}</h1>
+        <p className="text-gray-500 mb-4">{data.date}</p>
+        <MDXContent source={mdxSource} />
+      </article>
+    </>
   );
 }
