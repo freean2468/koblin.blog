@@ -1,0 +1,134 @@
+---
+title: "Quality Control with TDD"
+date: "2025-Feb-11"
+description: "How I apply TDD principles in my development process"
+tags: ["development process"]
+---
+I presume you are familiar with the Test-Driven Development (TDD) methodology.
+
+In this post, I'll share how I apply TDD principles in my development process, focusing on back-end API development.
+
+1. [The coverage determined by test code](#1)
+2. [Struggle to anti-intuitive](#2)
+3. [Mimic, mock](#3)
+4. [Quality Control](#4)
+
+Let's dive in!
+
+---
+
+<h2 id="1">1. The Coverage Determined by Test Code</h2>
+
+When you begin typing the first line of code, it gradually expands into a function, 
+a module, and eventually a complete feature. However, at this stage, 
+it's unclear whether the module meets the new business requirements or where you should stop writing code.
+>"Is this enough?" "Is this the right way to implement this feature?"
+
+Beyond these concerns, additional worries arise:
+> "What if I break an existing feature?"
+> "What if I introduce a new bug, security vulnerability, performance issue?"
+> "Do my APIs function as intended?"
+
+The answer to these concerns is **test code**, and **TDD** is the most effective way to ensure you write it.
+
+You write the test code first. But what test code?
+The test code should cover the new business requirements.
+
+For example, if you're implementing a new feature that allows users to upload a profile image, 
+your test scenario would be:
+```pseudocode
+## business requirements : Users can upload a profile image.
+START
+  GIVEN a user uploads a profile image
+  WHEN the image is uploaded
+  THEN the image is saved to the server
+  IF the image is not an image file
+  THEN return an error message
+END
+```
+
+You then transform this pseudocode into actual test code using the appropriate testing tools for your programming language or framework.
+
+Following the TDD cycle:
+1. Write the test code first and run it. The test will fail. (**Red**)
+2. Write the actual implementation to make the test pass. (**Green**)
+3. Refactor the code to improve readability and maintainability. (**Refactor**)
+
+<img
+  src="/posts/how_i_dev/tdd.png"
+  alt="Red-Green-Refactor"
+  width={600}
+  height={465}
+/>
+
+This is the **Red-Green-Refactor** cycle of TDD.
+
+By following this cycle, you don't need to worry about how much code to write initially.
+Instead, you determine how much test coverage is needed based on the business requirements.
+If all test cases pass, you can be confident that the feature functions correctly.
+
+As the codebase grows, these tests act as a safety net, ensuring that new changes do not break existing functionality.
+Without test coverage, modifying a large codebase becomes a risky endeavor.
+
+---
+
+<h2 id="2">2. Struggle Against Intuition</h2>
+
+One of the biggest challenges with TDD is that it feels counterintuitive at first.
+
+**Writing test code before actual implementation is not natural.**
+
+Most developers instinctively want to start coding the main logic fist rather than writing test cases. However, skipping test-first development often leads to regret
+and uncertainty about whether the code truly works as expected.
+
+To overcome this, I have made writing test code first a habit. Like any habit, 
+it requires practice and discipline, but the long-term benefits of well-tested, maintainable code make the effort worthwhile.
+
+---
+
+<h2 id="3">3. Mimic and Mock.</h2>
+
+While writing test codes, you would encounter situations where your code depends on external systems.
+However, testing those dependencies directly can be difficult for several reasons:
+- The dependent system is not yet implemented.
+- The dependenty system is unavailable in the test environment.
+- Test shouldn't have impact to the actual system.
+
+To handle this, we use mimicking and mocking techniques.
+
+<h3 id="mimic">(1) Mimic</h3>
+Mimicking means creating a simplified version of a real object that behaves in a similar way. 
+It’s often a manually implemented fake version of a dependency.
+ex. A fake database that mimics the real database’s behavior but stores data in memory instead.
+
+<h3 id="mock">(2) Mock</h3>
+Mocking means a dynamically creating object that replaces a dependency and allows you to verify how it was used.
+ex. Mocking a function call to ensure it was invoked.
+
+By mimicking or mocking dependencies, you can effectively isolate the code under test and ensure reliable, efficient testing.
+
+---
+
+<h2 id="4">4. Quality Control</h2>
+
+Quality Control(QC) ensures that software meets predefined standards before it reaches production.
+
+By using test-driven development, I ensure code quality, especially for APIs, before they are integrated with the front-end.
+APIs should be verified at the back-end level first, reducing potential issues down the line.
+
+Additionally, as the codebase grows, test coverage continues to act as a safety net, preventing regressions and ensuring consistent quality.
+
+---
+
+## Conclusion
+
+In this post, I shared how I apply TDD principles in my development process.
+
+- Writing test cases before implementation ensures proper coverage.
+- Overcoming the struggle of writing tests first requires practice and discipline.
+- Mimicking and mocking dependencies help isolate test cases.
+- Test coverage provides long-term quality control for growing codebases.
+
+Happy coding with TDD!
+
+{/* This post was originally posted on my [blog](https://koblin.blog) */}
