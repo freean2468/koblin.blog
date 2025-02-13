@@ -35,8 +35,7 @@ export function getSortedPosts() {
 
   return posts.sort(
     (a: PostPreviewData, b: PostPreviewData) =>
-      new Date(b.date).getUTCMilliseconds() -
-      new Date(a.date).getUTCMilliseconds()
+      new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }
 
