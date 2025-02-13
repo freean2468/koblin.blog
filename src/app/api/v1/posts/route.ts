@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const page = request.nextUrl.searchParams.get("page") || 1;
-  const limit = request.nextUrl.searchParams.get("limit") || 5;
+  const limit = request.nextUrl.searchParams.get("limit") || 100;
 
   const posts = getPaginatedPosts(Number(page), Number(limit));
 
