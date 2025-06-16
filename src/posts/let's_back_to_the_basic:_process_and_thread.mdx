@@ -1,0 +1,114 @@
+---
+title: "Let's back to basic: Process and thread"
+date: "2025-May-16"
+description: "Let's back to the basic series"
+tags: ["Computer Science", "Process"]
+---
+
+I have developed applications last 9 years.
+But I never had a moment to compile my knowledge and experience.
+In this series, I will try to recap my knowledge and experience in computer science.
+
+1. [Process](#1)
+2. [Thread](#2)
+3. [Context](#3)
+
+---
+
+<h2 id="1">1. Process</h2>
+
+To me, process is a program unit. These days, it is more familiar to call it "application" more than "program".
+
+On the background, applications are running as a process in the operating system.
+A process is an instance of a program that is being executed. It contains the program code and its current activity.
+The process flows its code through the CPU, which executes the instructions of the program.
+Then the process's current state will be changed and go on.
+
+A process can be thought of as a container for the program code, its current activity, and the resources it uses, such as memory and file handles.
+
+From the back in the days of single processor era to these days of multi-core processors, a process is the fundamental unit of execution in an operating system.
+However, a fundamental constraint has remained: only one process or thread can run per CPU core at a given time.
+
+Back in the single processor era, only one process could be executed at a time, meaning that the CPU would switch between processes to give the illusion of multitasking. This is known as time-sharing.
+For a example, if you have a web browser and a text editor open, the CPU will switch between the two processes, allowing you to interact with both applications as if they were running simultaneously.
+And for another example, if a process is waiting for I/O operations, such as reading from a file which is slow, the CPU can switch to another process that is ready to run, allowing for better utilization of the CPU.
+
+On these days, with multi-core processors, multiple processes can run simultaneously on different cores which allows for true parallel execution.
+
+---
+
+<h2 id="2">2. Thread</h2>
+
+Each process starts with a single thread of execution, commonly referred to as the main thread which implys that there are other threads in the process.
+
+<h3>Why do we need threads?</h3>
+Let's say a main thread is running a long-running task, such as downloading a file or processing a large amount of data. If the main thread is busy with this task,
+it cannot respond to user input or perform other tasks. 
+This can lead to a poor user experience, as the application may appear to be frozen or unresponsive. 
+To solve this problem, we can create additional threads within the process to handle these long-running tasks instead of the main thread. 
+Then, the main thread can continue to respond to user input and perform other tasks.
+
+<h3>Then why don't use multiple processes instead of threads?</h3>
+It's because threads are more lightweight than processes. 
+Threads share the same memory space and resources of the process, which allows for faster communication and less overhead compared to processes. 
+For example, if you have a web server that needs to handle multiple requests simultaneously, you can create a thread for each request within the same process. 
+This allows the server to handle multiple requests concurrently without the overhead of creating and managing multiple processes. 
+Threads are managed by the operating system and can be created, scheduled, and terminated independently of each other.
+
+<h3>What happens on communication between processes?</h3>
+When processes need to communicate with each other, they must use inter-process communication (IPC) mechanisms, such as pipes, sockets, or message queues. 
+These mechanisms can introduce additional overhead and complexity compared to communication between threads.
+Essentially, processes are different applications that run independently.
+
+<h3>The multi-threading performance?</h3>
+I mentioned that only one process can run on a CPU core at a time. 
+Then what happens when multiple threads are running on a single-core CPU? 
+When multiple threads are running on a single-core CPU, the operating system uses a technique called time-slicing to switch between threads. 
+This means that the CPU will allocate a small time slice to each thread, allowing them to run in a round-robin fashion. 
+This gives the illusion of parallel execution, but in reality, only one thread is running at a time on the CPU core.
+
+However, on multi-core CPUs, multiple threads can run simultaneously on different cores, allowing for true parallel execution. 
+This can lead to significant performance improvements for applications that are designed to take advantage of multi-threading.
+
+<h3>No overhead or issue for multithreading of a process on multi-core?</h3>
+While multi-threading can improve performance, it can also introduce some overhead
+and issues, such as: 
+- **Context Switching**: When the CPU switches between threads, it must save and restore the state of each thread, which can introduce some overhead.
+    - If threads are assigned to separate cores, context switching happens less often, reducing overhead — but it’s not eliminated entirely.
+- **Synchronization**: When multiple threads access shared resources, such as memory or file handles, they must be synchronized to prevent data corruption
+
+---
+
+<h2 id="3">3. Context</h2>
+
+<h3>What is context?</h3>
+Context refers to the state of a process or thread at a specific point in time. 
+It includes the values of all registers, the program counter, and the memory space used by the process or thread. 
+When a process or thread is switched out of execution, its context is saved so that it can be resumed later. 
+When it is resumed, its context is restored, allowing it to continue executing from where it left off.
+
+<h3>Register? Program Counter?</h3>
+Registers are small, high-speed storage locations within the CPU that hold data and instructions that are currently being processed. 
+The program counter (PC) is a special register that holds the address of the next instruction to be executed in the program.
+When a process or thread is switched out of execution, the values of all registers, including the program counter, are saved as part of its context. 
+When it is resumed, these values are restored, allowing the process or thread to continue executing from where it left off.
+
+<h3>How does context switching work?</h3>
+When a process or thread is switched out of execution, the operating system saves its context, including the values of all registers and the program counter, to a data structure called a process control block (PCB) or thread control block (TCB).
+When the process or thread is resumed, the operating system restores its context from the PCB or TCB, allowing it to continue executing from where it left off.
+
+<h3>Where are these blocks?</h3>
+The process control block (PCB) and thread control block (TCB) are typically stored in the operating system's kernel memory space. 
+When a process or thread is created, the operating system allocates a PCB or TCB to hold its context information.
+
+And that's why the context switching is expensive compared to the other CPU operations. Memory access is much slower than CPU operations.
+
+---
+
+## Conclusion
+
+Now now... It's nice to recap the basic concepts of process, thread and context for myself.
+The memory I studied long ago revisited and refreshed my understanding.
+I hope this post helps you too.
+
+{/* This post was originally posted on my [blog](https://koblin.blog) */}
