@@ -105,6 +105,28 @@ And that's why the context switching is expensive compared to the other CPU oper
 
 ---
 
+<h2 id="4">4. System Call</h2>
+
+<h3>Then what is system call?</h3>
+A system call is a mechanism that allows a user-level application to request services from the operating system.
+When a user-level application needs to perform an operation that requires access to system resources, such as reading from a file or allocating memory, it makes a system call to the operating system.
+The operating system then performs the requested operation on behalf of the application and returns the result to the application.
+
+<h3>Then what happens to the process or thread when a system call is made?</h3>
+The process or thread that makes the system call is temporarily suspended while the operating system performs the requested operation.
+Which means context switching happens.
+The operating system saves the context of the process or thread that made the system call.
+When the operation is complete, the operating system restores the context of the process or thread and resumes its execution.
+
+That's why system calls are expensive operations, as they involve context switching and the overhead of switching between user mode and kernel mode.
+
+<h3>What is user mode and kernel mode?</h3>
+User mode and kernel mode are two different execution modes in an operating system.
+- **User Mode**: In user mode, applications run with limited privileges and cannot directly access system resources, such as hardware devices or memory.
+- **Kernel Mode**: In kernel mode, the operating system has full access to all system resources and can perform privileged operations, such as managing hardware devices and memory.
+
+---
+
 ## Conclusion
 
 Now now... It's nice to recap the basic concepts of process, thread and context for myself.
