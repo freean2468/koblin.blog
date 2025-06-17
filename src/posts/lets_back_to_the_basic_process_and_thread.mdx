@@ -2,7 +2,7 @@
 title: "Let's back to basic: Process and thread"
 date: "2025-May-16"
 description: "Let's back to the basic series"
-tags: ["Computer Science", "Process"]
+tags: ["Computer Science", "Process", "Thread", "Context", "Register", "System Call"]
 ---
 
 I have developed applications last 9 years.
@@ -11,8 +11,24 @@ In this series, I will try to recap my knowledge and experience in computer scie
 
 1. [Process](#1)
 2. [Thread](#2)
+    1. [Why do we need threads?](#2-1)
+    2. [Then why don't use multiple processes instead of threads?](#2-2)
+    3. [What happens on communication between processes?](#2-3)
+    4. [The multi-threading performance?](#2-4)
+    5. [No overhead or issue for multithreading of a process on multi-core?](#2-5)
 3. [Context](#3)
-
+    1. [What is context?](#3-1)
+    2. [Register? Program Counter?](#3-2)
+    3. [How does context switching work?](#3-3)
+    4. [Where are these blocks?](#3-4)
+4. [Register](#4)
+    1. [What is register?](#4-1)
+    2. [What are the types of registers?](#4-2)
+5. [System Call](#5)
+    1. [What is system call?](#5-1)
+    2. [Then what happens to the process or thread when a system call is made?](#5-2)
+    3. [What is user mode and kernel mode?](#5-3)
+    
 ---
 
 <h2 id="1">1. Process</h2>
@@ -41,26 +57,26 @@ On these days, with multi-core processors, multiple processes can run simultaneo
 
 Each process starts with a single thread of execution, commonly referred to as the main thread which implys that there are other threads in the process.
 
-<h3>Why do we need threads?</h3>
+<h3 id="2-1">Why do we need threads?</h3>
 Let's say a main thread is running a long-running task, such as downloading a file or processing a large amount of data. If the main thread is busy with this task,
 it cannot respond to user input or perform other tasks. 
 This can lead to a poor user experience, as the application may appear to be frozen or unresponsive. 
 To solve this problem, we can create additional threads within the process to handle these long-running tasks instead of the main thread. 
 Then, the main thread can continue to respond to user input and perform other tasks.
 
-<h3>Then why don't use multiple processes instead of threads?</h3>
+<h3 id="2-2">Then why don't use multiple processes instead of threads?</h3>
 It's because threads are more lightweight than processes. 
 Threads share the same memory space and resources of the process, which allows for faster communication and less overhead compared to processes. 
 For example, if you have a web server that needs to handle multiple requests simultaneously, you can create a thread for each request within the same process. 
 This allows the server to handle multiple requests concurrently without the overhead of creating and managing multiple processes. 
 Threads are managed by the operating system and can be created, scheduled, and terminated independently of each other.
 
-<h3>What happens on communication between processes?</h3>
+<h3 id="2-3">What happens on communication between processes?</h3>
 When processes need to communicate with each other, they must use inter-process communication (IPC) mechanisms, such as pipes, sockets, or message queues. 
 These mechanisms can introduce additional overhead and complexity compared to communication between threads.
 Essentially, processes are different applications that run independently.
 
-<h3>The multi-threading performance?</h3>
+<h3 id="2-4">The multi-threading performance?</h3>
 I mentioned that only one process can run on a CPU core at a time. 
 Then what happens when multiple threads are running on a single-core CPU? 
 When multiple threads are running on a single-core CPU, the operating system uses a technique called time-slicing to switch between threads. 
@@ -70,7 +86,7 @@ This gives the illusion of parallel execution, but in reality, only one thread i
 However, on multi-core CPUs, multiple threads can run simultaneously on different cores, allowing for true parallel execution. 
 This can lead to significant performance improvements for applications that are designed to take advantage of multi-threading.
 
-<h3>No overhead or issue for multithreading of a process on multi-core?</h3>
+<h3 id="2-5">No overhead or issue for multithreading of a process on multi-core?</h3>
 While multi-threading can improve performance, it can also introduce some overhead
 and issues, such as: 
 - **Context Switching**: When the CPU switches between threads, it must save and restore the state of each thread, which can introduce some overhead.
@@ -81,23 +97,23 @@ and issues, such as:
 
 <h2 id="3">3. Context</h2>
 
-<h3>What is context?</h3>
+<h3 id="3-1">What is context?</h3>
 Context refers to the state of a process or thread at a specific point in time. 
 It includes the values of all registers, the program counter, and the memory space used by the process or thread. 
 When a process or thread is switched out of execution, its context is saved so that it can be resumed later. 
 When it is resumed, its context is restored, allowing it to continue executing from where it left off.
 
-<h3>Register? Program Counter?</h3>
+<h3 id="3-2">Register? Program Counter?</h3>
 Registers are small, high-speed storage locations within the CPU that hold data and instructions that are currently being processed. 
 The program counter (PC) is a special register that holds the address of the next instruction to be executed in the program.
 When a process or thread is switched out of execution, the values of all registers, including the program counter, are saved as part of its context. 
 When it is resumed, these values are restored, allowing the process or thread to continue executing from where it left off.
 
-<h3>How does context switching work?</h3>
+<h3 id="3-3">How does context switching work?</h3>
 When a process or thread is switched out of execution, the operating system saves its context, including the values of all registers and the program counter, to a data structure called a process control block (PCB) or thread control block (TCB).
 When the process or thread is resumed, the operating system restores its context from the PCB or TCB, allowing it to continue executing from where it left off.
 
-<h3>Where are these blocks?</h3>
+<h3 id="3-4">Where are these blocks?</h3>
 The process control block (PCB) and thread control block (TCB) are typically stored in the operating system's kernel memory space. 
 When a process or thread is created, the operating system allocates a PCB or TCB to hold its context information.
 
@@ -105,14 +121,32 @@ And that's why the context switching is expensive compared to the other CPU oper
 
 ---
 
-<h2 id="4">4. System Call</h2>
+<h2 id="4">4. Register</h2>
 
-<h3>Then what is system call?</h3>
+<h3 id="4-1">What is register?</h3>
+Registers are small, high-speed storage locations within the CPU that hold data and instructions that are currently being processed.
+They are used to store temporary data, such as the results of arithmetic operations, memory addresses, and control information.
+Registers are much faster than main memory (RAM) and are used to speed up the execution of instructions by providing quick access to frequently used data.
+
+<h3 id="4-2">What are the types of registers?</h3>
+There are several types of registers, including:
+- **General-purpose registers**: These registers can hold any type of data and are used for general-purpose computations.
+- **Special-purpose registers**: These registers are used for specific purposes, such as the program counter (PC), which holds the address of the next instruction to be executed, and the stack pointer (SP), which points to the top of the stack in memory.
+- **Status registers**: These registers hold information about the current state of the CPU, such as whether an arithmetic operation resulted in a carry or overflow, or whether an interrupt has occurred.
+- **Floating-point registers**: These registers are used to hold floating-point numbers and perform floating-point arithmetic operations.
+- **Control registers**: These registers are used to control the operation of the CPU, such as enabling or disabling interrupts, setting the privilege level, and configuring memory management.
+- **Segment registers**: These registers are used in segmented memory architectures to hold the base addresses of memory segments, allowing the CPU to access different parts of memory efficiently.
+
+---
+
+<h2 id="5">5. System Call</h2>
+
+<h3 id="5-1">What is system call?</h3>
 A system call is a mechanism that allows a user-level application to request services from the operating system.
 When a user-level application needs to perform an operation that requires access to system resources, such as reading from a file or allocating memory, it makes a system call to the operating system.
 The operating system then performs the requested operation on behalf of the application and returns the result to the application.
 
-<h3>Then what happens to the process or thread when a system call is made?</h3>
+<h3 id="5-2">Then what happens to the process or thread when a system call is made?</h3>
 The process or thread that makes the system call is temporarily suspended while the operating system performs the requested operation.
 Which means context switching happens.
 The operating system saves the context of the process or thread that made the system call.
@@ -120,7 +154,7 @@ When the operation is complete, the operating system restores the context of the
 
 That's why system calls are expensive operations, as they involve context switching and the overhead of switching between user mode and kernel mode.
 
-<h3>What is user mode and kernel mode?</h3>
+<h3 id="5-3">What is user mode and kernel mode?</h3>
 User mode and kernel mode are two different execution modes in an operating system.
 - **User Mode**: In user mode, applications run with limited privileges and cannot directly access system resources, such as hardware devices or memory.
 - **Kernel Mode**: In kernel mode, the operating system has full access to all system resources and can perform privileged operations, such as managing hardware devices and memory.
