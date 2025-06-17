@@ -1,0 +1,184 @@
+---
+title: "Let's back to basic: Browser"
+date: "2025-May-17"
+description: "Let's back to the basic series"
+tags: ["Computer Science", "Browser", "JavaScript"]
+---
+
+I have developed applications last 9 years.
+But I never had a moment to compile my knowledge and experience.
+In this series, I will try to recap my knowledge and experience in computer science.
+
+1. [Browser](#1)
+    1. [What is a browser?](#1-1)
+    2. [How does a browser work?](#1-2)
+    3. [All processes list of a browser](#1-3)
+    4. [Threads in a browser](#1-4)
+    5. [What if a browser sends an HTTP request?](#1-5)
+    6. [Message Passing in Browsers](#1-6)
+    7. [Event Loop in Browsers](#1-7)
+    8. [Callback, Promise, and async/await](#1-8)
+    9. [Browser Rendering Pipeline](#1-9)
+2. [JavaScript](#2)
+    1. [EcmaScript](#2-1)
+    2. [JavaScript Engines](#2-2)
+    3. [JavaScript in Browsers](#2-3)
+    4. [TypeScript](#2-4)
+
+---
+
+<h2 id="1">1. Browser</h2>
+
+<h3 id="1-1">What is a browser?</h3>
+A browser is a software application that allows users to access and navigate the internet.
+It interprets HTML, CSS, and JavaScript to render web pages and provides a user interface for interaction.
+
+<h3 id="1-2">How does a browser work?</h3>
+A browser works by sending requests to web servers, retrieving resources, and rendering them for display.
+When a user enters a URL, the browser performs the following steps:
+1. **DNS Resolution**: Converts the domain name into an IP address.
+2. **HTTP Request**: Sends an HTTP request to the server at that IP address.
+3. **Response Handling**: Receives the server's response, which includes HTML, CSS, JavaScript, and other resources.
+4. **Rendering**: Parses the HTML and CSS to create the Document Object Model (DOM) and the CSS Object Model (CSSOM).
+5. **JavaScript Execution**: Executes any JavaScript code, which can manipulate the DOM and CSSOM.
+6. **Painting**: Renders the visual representation of the page on the screen.
+
+What if user interface takes a long time to proceed?
+Then the browser will be blocked and the user will not be able to interact with it.
+To prevent this, modern browsers adopt a hybrid architecture that combines both multi-processing and multi-threading.
+- Each browser tab or site is usually managed in a separate **process**, improving security and crash isolation.
+- Within each process, especially the renderer, multiple **threads** handle different tasks such as rendering, painting, compositing, and running scripts.
+
+This separation of concerns ensures better performance, responsiveness, and reliability for modern web experiences.
+
+<h3 id='1-3'>All processe list of a browser</h3>
+- **Main Process**: Handles the browser's UI, manages tabs/windows, and coordinates between other processes.
+- **Renderer Process**: Renders the web page, parses HTML/CSS, runs JavaScript, builds DOM/CSSOM, performs layout and painting.
+- **Network Process**: Manages network I/O like DNS resolution, HTTP requests/responses, and caching.
+- **GPU Process**: Handles hardware-accelerated graphics tasks (e.g., compositing layers, WebGL).
+- **Utility/Extension Process**: Handles tasks like audio, PDF viewer, or browser extensions (depending on the use case).
+
+And also each of these processes can have multiple threads to handle concurrent tasks efficiently.
+
+<h3 id='1-4'>Threads in a browser</h3>
+- **Main Thread** :	Executes JavaScript, handles DOM, user events, layout & painting.
+- **Compositor Thread** : Combines layers and manages smooth scrolling/animations.
+- **Raster Thread(s)** : Converts vector graphics to pixels.
+- **Worker Threads** : Run background tasks like Web Workers, Service Workers.
+- **I/O Thread** : Handles file, network, or IPC tasks (in certain processes).
+
+<h3 id='1-5'>What if a browser sends an HTTP request?</h3>
+Let's imagine inside the Renderer Process, your JavaScript does this:
+
+```javascript
+const response = fetch('/api/data');
+const text = response.text(); // Synchronous? UI freezes!
+```
+This would block the Renderer’s main thread, which:
+- Handles user input (clicks, typing)
+- Executes JS
+- Triggers layout and paint
+- Updates DOM
+
+Even though the network fetching is done in a separate process,
+waiting for the result synchronously in the renderer’s thread means:
+- No repainting,
+- No user interaction,
+- The tab freezes until the response returns.
+
+In contrast, if you use asynchronous fetching:
+
+```javascript
+fetch('/api/data')
+  .then(response => response.text())
+  .then(text => {
+    // Update DOM without blocking the UI
+  });
+```
+
+This allows the browser to continue processing user input, rendering updates, and other tasks while waiting for the network response.
+To enable this, browsers use a **message-passing** mechanism between processes and threads.
+
+<h3 id='1-6'>Message Passing in Browsers</h3>
+Browsers use a message-passing system to communicate between different processes and threads. This allows them to maintain responsiveness and isolate tasks. Key concepts include:
+- **IPC (Inter-Process Communication)**: Mechanism for processes to communicate, often using messages or events.
+- **Event Loop**:
+  - Each process has its own event loop that handles events, messages, and tasks.
+  - The main thread processes events from the event loop, allowing it to remain responsive.
+
+<h3 id='1-7'>Event Loop in Browsers</h3>
+
+The event loop is a core part of the browser's architecture, allowing it to handle asynchronous operations efficiently. It works as follows:
+1. **Task Queue**: When an asynchronous operation (like a network request) completes, it places a callback in the task queue.
+2. **Event Loop Cycle**: The event loop continuously checks the task queue for pending tasks.
+3. **Execution**: When the main thread is idle, it picks tasks from the queue and executes them, allowing the browser to remain responsive.
+
+<h3 id='1-8'>Callback, Promise, and async/await</h3>
+
+Callbacks, Promises, and async/await are mechanisms for handling asynchronous operations in JavaScript:
+- **Callback**: A function passed as an argument to another function, executed after the operation completes.
+- **Promise**: An object representing the eventual completion (or failure) of an asynchronous operation, allowing chaining of `.then()` and `.catch()` methods.
+- **async/await**: Syntactic sugar built on Promises, allowing asynchronous code to be written in a more synchronous style. An `async` function returns a Promise, and `await` pauses execution until the Promise resolves.
+
+<h3 id='1-9'>Browser Rendering Pipeline</h3>
+The browser rendering pipeline is the sequence of steps a browser takes to convert HTML, CSS, and JavaScript into a visual representation of a web page. The main stages include:
+1. **Parsing**: The browser parses HTML to create the DOM and CSS to create the CSSOM.
+2. **DOM Construction**: The DOM represents the structure of the web page, while the CSSOM represents the styles.
+3. **Render Tree Creation**: The browser combines the DOM and CSSOM to create a render tree, which contains only the visible elements of the page.
+4. **Layout**: The browser calculates the size and position of each element in the render tree, determining how they will be displayed on the screen.
+5. **Painting**: The browser paints the pixels on the screen based on the layout, converting the render tree into a visual representation.
+
+Browser engines like Blink (used in Chrome and Edge) and Gecko (used in Firefox) implement this pipeline.
+
+---
+
+<h2 id="2">2. Javascript</h2>
+
+Javascript has been a core part of web development since its inception. 
+It was followed by the browser's development, which needed asynchronous capabilities to handle user interactions and dynamic content updates.
+JavaScript's event-driven nature and non-blocking I/O model came from this need, allowing developers to create responsive web applications.
+
+<h3 id="2-1">EcmaScript</h3>
+
+ECMAScript is the standardized version of JavaScript, providing a consistent specification for implementing the language across different environments.
+It defines the syntax, semantics, and features of JavaScript, ensuring compatibility and interoperability among various browsers and platforms.
+ECMAScript versions are released annually, introducing new features and improvements to the language.
+For example, ES6 (ECMAScript 2015) was a significant update that introduced features like classes, modules, arrow functions, and promises, enhancing JavaScript's capabilities for modern web development.
+
+<h3 id="2-2">JavaScript Engines</h3>
+
+JavaScript engines are the core components of browsers that execute JavaScript code. They parse, compile, and execute JavaScript, converting it into machine code for the host environment.
+Popular JavaScript engines include:
+- **V8**: Developed by Google, used in Chrome and Node.js.
+- **SpiderMonkey**: Developed by Mozilla, used in Firefox.
+- **JavaScriptCore**: Developed by Apple, used in Safari.
+- **Chakra**: Developed by Microsoft, used in older versions of Edge.
+These engines optimize JavaScript execution through techniques like Just-In-Time (JIT) compilation, garbage collection, and inline caching, improving performance and responsiveness a the renderer process.
+
+<h3 id="2-3">JavaScript in Browsers</h3>
+
+JavaScript plays a crucial role in modern web browsers, enabling dynamic content, interactivity, and asynchronous operations. 
+Browsers provide APIs like the DOM API, Fetch API, and WebSocket API, allowing developers to interact with the browser and perform tasks like DOM manipulation, network communication, and real-time data exchange.
+JavaScript's integration with HTML and CSS enables the creation of rich, interactive user interfaces, enhancing the overall user experience on the web.
+
+<h3 id="2-4">TypeScript</h3>
+
+TypeScript is a superset of JavaScript that adds static typing and other features to the language.
+It allows developers to catch type-related errors at compile time, improving code quality and maintainability.
+In the javascript, compile time errors are not caught until runtime, which can lead to bugs that are difficult to trace.
+TypeScript's type system enables better tooling support, such as autocompletion, refactoring, and code navigation, making development more efficient.
+TypeScript also supports modern JavaScript features and provides additional features like interfaces, enums, and generics, allowing for more robust code organization and design patterns.
+
+
+TypeScript compiles down to standard JavaScript, ensuring compatibility with existing browsers and environments.
+It is widely used in modern web development, especially in large-scale applications, due to its ability to provide better tooling, code organization, and type safety.
+
+---
+
+## Conclusion
+
+In this post, I shared how browsers work, their architecture, and the role of JavaScript in modern web development.
+For myself, this was a good recap of the basic knowledge about browsers.
+I hope this series will help you understand the fundamental concepts of computer science and web development.
+
+{/* This post was originally posted on my [blog](https://koblin.blog) */}
