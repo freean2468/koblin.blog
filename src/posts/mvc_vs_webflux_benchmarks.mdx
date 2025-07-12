@@ -1,0 +1,326 @@
+---
+title: "Spring MVC vs WebFlux Benchmarks"
+date: "2025-May-16"
+description: ""
+tags: ["Java", "Spring", "Spring MVC", "Spring WebFlux", "Benchmark"]
+---
+
+For several years of web development, I never had a chance to use Spring.
+This time I decided to try it out and compare the performance of two different approaches: Spring MVC and Spring WebFlux.
+At first, I thought that the difference would be significant, but it turned out that the performance of both approaches is quite similar.
+Let's take a look at the results of the benchmarks.
+
+
+1. [Spring MVC](#1)
+2. [Spring WebFlux](#2)
+3. [Testing Environment](#3)
+    1. [Docker Compose](#3.1)
+    2. [Constants](#3.2)
+    3. [Variables](#3.3)
+    4. [Endpoints](#3.4)
+4. [Results](#4)
+    1. [Throughput](#4.1)
+    2. [Transfer](#4.2)
+    3. [Average Latency](#4.3)
+    4. [Max Latency](#4.4)
+    5. [Insights](#4.5)
+    6. [Total](#4.6)
+
+---
+
+<h2 id="1">1. Spring MVC</h2>
+
+Spring MVC is a traditional web framework that uses the Servlet API to handle requests and responses.
+
+It is a synchronous framework, meaning that each request is processed in a separate thread, blocking the thread until the response is ready.
+
+But it doesn't mean CPU holds the waiting thread, CPU is free to handle other threads while the waiting thread is blocked.
+
+So the Spring MVC makes a thread pool to handle requests. The default size of the thread pool is 200 threads, but it can be configured to a different size.
+
+In this benchmark, I configured the thread pool size from 50 to 200 threads and measured the performance of the application under different loads.
+
+---
+
+<h2 id="2">2. Spring WebFlux</h2>
+
+Spring WebFlux is a reactive web framework that uses the Reactor library to handle requests and responses.
+
+It is an asynchronous framework, meaning that each request is processed in a non-blocking way, allowing the application to handle more requests with fewer threads.
+
+As the event loop is well known, it uses a single thread to handle all requests.
+
+The Spring WebFlux's default worker threads are four which can be configured to a different size.
+
+In this benchmark, I configured the worker threads from one to four threads and measured the performance of the application under different loads.
+
+
+---
+
+<h2 id="3">3. Testing Environment</h2>
+
+I used wrk to benchmark the performance of both frameworks.
+
+<h3 id="3.1">Docker Compose</h3>
+
+To get reliable results, I ran each frameworks with the same resources in a docker-compose like below:
+
+```yaml
+services:
+  mvc:
+    build: ./mvc
+    container_name: spring_mvc
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/benchmarkdb
+      - SPRING_DATASOURCE_USERNAME=benchmark
+      - SPRING_DATASOURCE_PASSWORD=benchmark
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+
+  webflux:
+    build: ./webflux
+    container_name: spring_webflux
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/benchmarkdb
+      - SPRING_R2DBC_USERNAME=benchmark
+      - SPRING_R2DBC_PASSWORD=benchmark
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+
+  postgres:
+    image: postgres:17
+    container_name: benchmark_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: benchmarkdb
+      POSTGRES_USER: benchmark
+      POSTGRES_PASSWORD: benchmark
+    command: postgres -c max_connections=500
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+
+volumes:
+  pgdata:
+
+```
+
+<h3 id="3.2">Constants</h3>
+
+The wrk's loads were maintained by 10 seconds.
+
+<h3 id="3.3">Variables</h3>
+
+Main variables used in the benchmarks are:
+1. **CPUs**: Number of CPUs allocated to the service.
+2. **Memory**: Amount of memory allocated to the service.
+3. **MVC Thread Pool Size**: Number of threads in the Spring MVC thread pool.
+4. **WebFlux Worker Threads**: Number of worker threads in the Spring WebFlux event loop.
+6. **Concurrency**: Number of concurrent requests sent to the service by wrk.
+
+<h3 id="3.4">Endpoints</h3>
+
+There are three endpoints in the two frameworks used in the benchmarks:
+1. **/static**: Returns a static response with a fixed string.
+2. **/dbtest**: Returns a response from the database using a simple query.
+3. **/dbtest/slow**: Returns a response from the database using a slow query that takes at least 100ms to complete.
+
+Spring WebFlux
+```java
+@SpringBootApplication
+@RestController
+@RequestMapping("/api")
+public class WebfluxApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(WebfluxApplication.class, args);
+    }
+
+    @GetMapping("/static")
+    public Mono<String> staticResponse() {
+        return Mono.just("{\"message\":\"Hello from WebFlux\"}");
+    }
+
+    @Autowired
+    private DatabaseClient databaseClient;
+
+    public record NowResult(String now) {}
+
+    @GetMapping("/dbtest")
+    public Mono<String> dbTest() {
+        return databaseClient.sql("SELECT now() AS now")
+            .fetch()
+            .first()
+            .map(row -> {
+                return "{\"dbTime\":\"" + String.valueOf(row.get("now")) + "\"}";
+            });
+    }
+
+    @GetMapping("/dbtest/slow")
+    public Mono<String> dbTestSlow() {
+        return databaseClient.sql("SELECT now() AS now, pg_sleep(0.1)")
+            .fetch()
+            .first()
+            .map(row -> {
+                return "{\"dbTime\":\"" + String.valueOf(row.get("now")) + "\"}";
+            })
+            .onErrorReturn("{\"error\":\"Database error\"}");
+    }
+}
+```
+
+Spring MVC
+```java
+@SpringBootApplication
+@RestController
+@RequestMapping("/api")
+public class MvcApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MvcApplication.class, args);
+    }
+
+    @GetMapping("/static")
+    public String staticResponse() {
+        return "{\"message\":\"Hello from MVC\"}";
+    }
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @GetMapping("/dbtest")
+    public String dbTest() {
+        String time = jdbcTemplate.queryForObject("SELECT now()", String.class);
+        return "{\"dbTime\":\"" + time + "\"}";
+    }
+
+    @GetMapping("/dbtest/slow")
+    public String dbTestWithLatency() throws InterruptedException {
+        String time = jdbcTemplate.queryForObject("SELECT now() FROM pg_sleep(0.1)", String.class);
+        return "{\"dbTimeWithLatency\":\"" + time + "\"}";
+    }
+}
+```
+
+---
+
+<h2 id="4">4. Results</h2>
+
+I charted the results focusing on four metrics:
+1. **throughput**: Requests per second.
+2. **transfer**: Amount of data transferred per second.
+3. **average latency**: Average time taken to process a request.
+4. **max latency**: Maximum time taken to process a request.
+
+<h3 id="4.1">Throughput</h3>
+Below chart shows the throughput(requests/s) of both frameworks under different loads on 1CPU 512M.
+X-axis represents the number of concurrent requests sent to the service, and Y-axis represents the number of requests per second.
+<img
+  src="/posts/benchmark/2c1024m_mv200_wf4_throughput.png"
+  alt="Red-Green-Refactor"
+  width={1142}
+  height={700}
+/>
+
+<h3 id="4.2">Transfer</h3>
+Below chart shows the transfer(MB/s) of both frameworks under different loads on 1CPU 512M.
+X-axis represents the number of concurrent requests sent to the service, and Y-axis represents the amount of data transferred per second.
+<img
+  src="/posts/benchmark/2c1024m_mv200_wf4_transfer.png"
+  alt="Red-Green-Refactor"
+  width={1146}
+  height={692}
+/>
+
+<h3 id="4.3">Average Latency</h3>
+Below chart shows the average latency(ms) of both frameworks under different loads on 1CPU 512M.
+X-axis represents the number of concurrent requests sent to the service, and Y-axis represents the average time taken to process a request.
+<img
+  src="/posts/benchmark/2c1024m_mv200_wf4_avg_latency.png"
+  alt="Red-Green-Refactor"
+  width={1146}
+  height={686}
+/>
+
+<h3 id="4.4">Max Latency</h3>
+Below chart shows the maximum latency(ms) of both frameworks under different loads on 1CPU 512M.
+X-axis represents the number of concurrent requests sent to the service, and Y-axis represents the maximum time taken to process a request.
+<img
+  src="/posts/benchmark/2c1024m_mv200_wf4_max_latency.png"
+  alt="Red-Green-Refactor"
+  width={1150}
+  height={682}
+/>
+
+<h3 id="4.5">Insights</h3>
+
+What I found from the results is that both frameworks have similar performance under different loads.
+The throughput, transfer, average latency, and max latency are quite similar for both frameworks.
+The main difference is that Spring MVC has a higher max latency than Spring WebFlux.
+
+For better UX for every request, I would like to use Spring WebFlux. 
+Because it guarantees that every request will be processed within a certain time, while Spring MVC may have some requests that take longer to process.
+
+In the resource view, Spring WebFlux is more efficient than Spring MVC.
+Because it uses fewer threads(2 against 100) to handle the same number of requests, it consumes less memory.
+
+<h3 id="4.6">Total</h3>
+Below charts show the total throughput, transfer, average latency, and max latency of both frameworks in order under different loads on different computing resources.
+
+<img
+  src="/posts/benchmark/total_throughput.png"
+  alt="Red-Green-Refactor"
+  width={582}
+  height={348}
+/>
+<img
+  src="/posts/benchmark/total_transfer.png"
+  alt="Red-Green-Refactor"
+  width={554}
+  height={356}
+/>
+<img
+  src="/posts/benchmark/total_avg_latency.png"
+  alt="Red-Green-Refactor"
+  width={574}
+  height={341}
+/>
+<img
+  src="/posts/benchmark/total_max_latency.png"
+  alt="Red-Green-Refactor"
+  width={517}
+  height={309}
+/>
+
+
+---
+
+## Conclusion
+
+The results of the benchmarks show what I never expected.
+The primary reason I thought Spring WebFlux would outperform Spring MVC was that it's a reactive framework that uses non-blocking I/O.
+In the process of the benchmarks, I realized that the Spring MVC is using a thread pool which allows it to handle heavy concurrent requests with a limitation.
+
+At the last, I benchmarked Django and Next.JS with the same endpoints and resources.
+And the results were shocking.
+
+Spring frameworks outperformed Django and Next.JS in every metric with a significant margin.
+
+Given more time, I would like to benchmark Spring and Go frameworks in the same way.
+
+{/* This post was originally posted on my [blog](https://koblin.blog) */}
