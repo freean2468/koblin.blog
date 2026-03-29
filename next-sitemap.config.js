@@ -2,6 +2,10 @@
 const path = require("path");
 const fs = require("fs");
 
+if (typeof globalThis.location === "undefined") {
+  globalThis.location = new URL("https://koblin.blog");
+}
+
 const config = {
   siteUrl: "https://koblin.blog", // Your site URL
   generateRobotsTxt: true, // Generate a `robots.txt` file
